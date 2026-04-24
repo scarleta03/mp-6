@@ -1,65 +1,90 @@
-import Image from "next/image";
+import { auth } from "@/auth"
+import { handleSignIn } from "./actions"
+import ProfileCard from "./components/ProfileCard"
+import styled from "styled-components"
 
-export default function Home() {
-  return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
-    </div>
-  );
+// show profile if logged in, otherwise show the sign in button
+export default async function Home() {
+    const session = await auth()
+
+    return (
+        <Page>
+            <Card>
+                {session?.user ? (
+                    <>
+                        <Heading>your profile</Heading>
+                        <ProfileCard
+                            user={{
+                                name: session.user.name,
+                                email: session.user.email,
+                                image: session.user.image,
+                                username: session.user.username,
+                            }}
+                        />
+                    </>
+                ) : (
+                    <>
+                        <Heading>hey</Heading>
+                        <Sub>sign in to see your stuff</Sub>
+                        <form action={handleSignIn}>
+                            <SignInButton type="submit">
+                                sign in with github
+                            </SignInButton>
+                        </form>
+                    </>
+                )}
+            </Card>
+        </Page>
+    )
 }
+
+
+const Page = styled.main`
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #dbeafe;
+    padding: 20px;
+`
+
+const Card = styled.div`
+    background: #fff;
+    border-radius: 24px;
+    padding: 64px 56px;
+    width: 90%;
+    max-width: 560px;
+    text-align: center;
+    box-shadow: 0 4px 32px rgba(59, 130, 246, 0.1);
+    border: 1px solid #bfdbfe;
+`
+
+const Heading = styled.h1`
+    font-size: 36px;
+    font-weight: 800;
+    color: #1e40af;
+    margin: 0 0 10px;
+`
+
+const Sub = styled.p`
+    font-size: 18px;
+    color: #60a5fa;
+    margin: 0 0 24px;
+`
+
+const SignInButton = styled.button`
+    padding: 16px 40px;
+    border-radius: 999px;
+    background: #1e40af;
+    color: #fff;
+    font-size: 22px;
+    font-weight: 500;
+    border: none;
+    cursor: pointer;
+    margin: 0 auto;
+    transition: background 0.15s ease;
+
+    &:hover {
+        background: #1d4ed8;
+    }
+`
