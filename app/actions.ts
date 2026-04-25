@@ -3,7 +3,7 @@
 import { cookies } from "next/headers"
 import { signIn, signOut } from "@/auth"
 
-// clears auth cookies so refreshing the page signs the user out
+// two cookie names because auth.js uses a different one on https (production)
 export async function clearSession() {
     const cookieStore = await cookies()
     cookieStore.delete("authjs.session-token")

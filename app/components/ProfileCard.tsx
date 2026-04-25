@@ -12,9 +12,9 @@ type User = {
     username?: string
 }
 
-// clears the session cookie when this component mounts
-// so if the user refreshes, they get sent back to sign in
 export default function ProfileCard({ user }: { user: User }) {
+    // delete the session cookie on mount so refreshing sends them back to sign in
+    // the user data still shows because it was passed as props from the server
     useEffect(() => {
         clearSession()
     }, [])
@@ -48,6 +48,7 @@ const Wrapper = styled.div`
     gap: 16px;
 `
 
+// circle crop with a pink ring
 const Avatar = styled(Image)`
     border-radius: 50%;
     border: 3px solid #f9a8d4;

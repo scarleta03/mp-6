@@ -3,7 +3,9 @@ import { handleSignIn } from "./actions"
 import ProfileCard from "./components/ProfileCard"
 import styled from "styled-components"
 
-// show profile if logged in, otherwise show the sign in button
+// force a fresh server render every time so the session check isnt cached
+export const dynamic = "force-dynamic"
+
 export default async function Home() {
     const session = await auth()
 
@@ -13,14 +15,7 @@ export default async function Home() {
                 {session?.user ? (
                     <>
                         <Heading>your profile</Heading>
-                        <ProfileCard
-                            user={{
-                                name: session.user.name,
-                                email: session.user.email,
-                                image: session.user.image,
-                                username: session.user.username,
-                            }}
-                        />
+                        <ProfileCard user={session.user} />
                     </>
                 ) : (
                     <>
@@ -37,7 +32,6 @@ export default async function Home() {
         </Page>
     )
 }
-
 
 const Page = styled.main`
     min-height: 100vh;
